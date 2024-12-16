@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 
+import 'routing/appRouting.dart';
+import 'routing/routs.dart';
 import 'theming/colors.dart';
 
 void main() {
-  runApp(const MainApp());
+  runApp(MainApp(appRouter: AppRouts()));
 }
 
 class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+  const MainApp({super.key, required this.appRouter});
+  final AppRouts appRouter;
 
   @override
   Widget build(BuildContext context) {
@@ -17,11 +20,8 @@ class MainApp extends StatelessWidget {
         scaffoldBackgroundColor: ColorsManager.primaryColor,
         primaryColor: ColorsManager.primaryColor,
       ),
-      home: const Scaffold(
-        body: Center(
-          child: Text('Hello World!', style: TextStyle(color: Colors.white)),
-        ),
-      ),
+      initialRoute: Routes.homePage,
+      onGenerateRoute: appRouter.generateRoute,
     );
   }
 }
