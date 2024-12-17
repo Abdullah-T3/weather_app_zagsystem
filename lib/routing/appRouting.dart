@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:weather_app_zagsystem/MVVM/Views/home_screen.dart';
+import 'package:weather_app_zagsystem/MVVM/Views/screen/home_screen.dart';
 
 import 'routs.dart';
 class AppRouts {
