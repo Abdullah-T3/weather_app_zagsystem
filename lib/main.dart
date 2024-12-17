@@ -20,7 +20,7 @@ class MainApp extends StatelessWidget {
         scaffoldBackgroundColor: ColorsManager.primaryColor,
         primaryColor: ColorsManager.primaryColor,
       ),
-      initialRoute: Routes.homePage,
+      initialRoute: Routes.detailScreen,
       onGenerateRoute: appRouter.generateRoute,
     );
   }
