@@ -5,6 +5,8 @@ import 'package:weather_app_zagsystem/theming/colors.dart';
 import '../../../../theming/styles.dart';
 
 class DetailsScreen extends StatelessWidget {
+  const DetailsScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
