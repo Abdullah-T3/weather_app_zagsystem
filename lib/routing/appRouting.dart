@@ -15,26 +15,23 @@ class AppRouts {
     switch (settings.name) {
       case Routes.homePage:
         return MaterialPageRoute(
-            builder: (context) => BlocProvider(
-                  create: (context) => WeatherCubit(),
-                  child: const HomeScreen(),
-                ));
-      case Routes.settingsScreen:
+          builder: (context) => BlocProvider(
+            create: (context) => WeatherCubit(),
+            child: const HomeScreen(),
+          ),
+        );
+      case Routes.settingScreen:
         return MaterialPageRoute(builder: (context) => SettingsScreen());
       case Routes.splashScreen:
         return MaterialPageRoute(builder: (context) => const SplashScreen());
       case Routes.loginScreen:
         return MaterialPageRoute(
-            builder: (context) => BlocProvider(
-                  create: (context) => AuthCubit(FirebaseAuth.instance),
-                  child: LoginScreen(),
-                ));
+          builder: (context) => LoginScreen(),
+        );
       case Routes.signUpScreen:
         return MaterialPageRoute(
-            builder: (context) => BlocProvider(
-                  create: (context) => AuthCubit(FirebaseAuth.instance),
-                  child: SignUpScreen(),
-                ));
+          builder: (context) => SignUpScreen(),
+        );
       default:
         return null;
     }

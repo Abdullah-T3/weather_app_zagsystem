@@ -9,12 +9,30 @@ import '../../../../theming/styles.dart';
 import '../Widgets/custom_button.dart';
 import '../Widgets/custom_text_field.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
+  LoginScreen({Key? key}) : super(key: key);
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   final formKey = GlobalKey<FormState>();
+
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  LoginScreen({Key? key}) : super(key: key);
+  @override
+  void initState() {
+    super.initState();
+    // Check if the user is already logged in
+    final authCubit = context.read<AuthCubit>();
+    if (authCubit.state is Authenticated) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        context.pushReplacementNamed(Routes.homePage);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

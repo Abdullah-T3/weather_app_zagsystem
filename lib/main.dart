@@ -1,17 +1,29 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import 'MVVM/View_Models/Authcubit/auth_cubit.dart';
 import 'routing/appRouting.dart';
 import 'routing/routs.dart';
 import 'theming/colors.dart';
 
 void main() async {
-  runApp(MainApp(appRouter: AppRouts()));
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   await Firebase.initializeApp();
+  runApp(
+    MultiBlocProvider(
+      providers: [
+        BlocProvider<AuthCubit>.value(value: AuthCubit(FirebaseAuth.instance)),
+      ],
+      child: MainApp(
+        appRouter: AppRouts(),
+      ),
+    ),
+  );
 }
 
 class MainApp extends StatelessWidget {

@@ -6,50 +6,54 @@ part 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   final FirebaseAuth _firebaseAuth;
+  late final Stream<User?> _authStateChangesSubscription;
 
-  AuthCubit(this._firebaseAuth) : super(AuthInitial());
+  AuthCubit(this._firebaseAuth) : super(AuthInitial()) {
+    // Listen to authentication state changes
+    _authStateChangesSubscription = _firebaseAuth.authStateChanges();
+    _authStateChangesSubscription.listen((user) {
+      if (!isClosed) {
+        if (user != null) {
+          emit(Authenticated(user));
+        } else {
+          emit(Unauthenticated());
+        }
+      }
+    });
+  }
 
-  // Sign in with email and password
   Future<void> signIn(String email, String password) async {
     try {
       emit(AuthLoading());
-      final userCredential = await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
-      emit(Authenticated(userCredential.user!));
-    } catch (e) {
-      emit(AuthError(e.toString()));
-      print("Error: $e");
+      await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
+    } on FirebaseAuthException catch (e) {
+      if (!isClosed) emit(AuthError(e.message ?? 'An error occurred during sign in'));
     }
   }
 
   Future<void> signUp(String email, String password) async {
     try {
       emit(AuthLoading());
-      final userCredential = await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
-      emit(Authenticated(userCredential.user!));
-    } catch (e) {
-      emit(AuthError(e.toString()));
-      print("Error: $e");
+      await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
+    } on FirebaseAuthException catch (e) {
+      if (!isClosed) emit(AuthError(e.message ?? 'An error occurred during sign up'));
     }
   }
 
-  // Sign out
   Future<void> signOut() async {
     try {
       emit(AuthLoading());
       await _firebaseAuth.signOut();
-      emit(Unauthenticated());
+      if (!isClosed) emit(Unauthenticated());
     } catch (e) {
-      emit(AuthError(e.toString()));
+      if (!isClosed) emit(AuthError('An error occurred during sign out'));
     }
   }
 
-  // Check authentication status
-  void checkAuthStatus() {
-    final user = _firebaseAuth.currentUser;
-    if (user != null) {
-      emit(Authenticated(user));
-    } else {
-      emit(Unauthenticated());
-    }
+  @override
+  Future<void> close() {
+    // Cancel the subscription to auth state changes
+    _authStateChangesSubscription.drain();
+    return super.close();
   }
 }

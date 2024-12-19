@@ -13,6 +13,13 @@ class WeatherCubit extends Cubit<WeatherState> {
   static const _cachedWeatherKey = 'weather_data';
   final _dio = Dio();
 
+  // State variables for units
+  String _temperatureUnit = "Celsius"; // Default temperature unit
+  String _windSpeedUnit = "Km/h"; // Default wind speed unit
+
+  String get temperatureUnit => _temperatureUnit;
+  String get windSpeedUnit => _windSpeedUnit;
+
   Future<void> fetchWeather() async {
     try {
       emit(WeatherLoading());
@@ -20,7 +27,7 @@ class WeatherCubit extends Cubit<WeatherState> {
       // Try to get cached data first
       final cachedData = await _getCachedWeather();
       if (cachedData != null) {
-        emit(WeatherLoaded(cachedData));
+        if (!isClosed) emit(WeatherLoaded(cachedData));
       }
 
       // Fetch fresh data
@@ -38,18 +45,18 @@ class WeatherCubit extends Cubit<WeatherState> {
       if (response.statusCode == 200 && response.data != null) {
         final weatherData = WeatherData.fromJson(response.data);
         await _cacheWeather(weatherData);
-        emit(WeatherLoaded(weatherData));
+        if (!isClosed) emit(WeatherLoaded(weatherData));
       } else {
-        emit(WeatherError('Failed to load weather data'));
+        if (!isClosed) emit(WeatherError('Failed to load weather data'));
       }
     } on DioException catch (e) {
       String errorMessage = 'Network error occurred';
       if (e.response != null) {
         errorMessage = 'Error: ${e.response?.statusCode} - ${e.response?.statusMessage}';
       }
-      emit(WeatherError(errorMessage));
+      if (!isClosed) emit(WeatherError(errorMessage));
     } catch (e) {
-      emit(WeatherError('An unexpected error occurred: $e'));
+      if (!isClosed) emit(WeatherError('An unexpected error occurred: $e'));
       print('Error fetching weather data: $e');
     }
   }

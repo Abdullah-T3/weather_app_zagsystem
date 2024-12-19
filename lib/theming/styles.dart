@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'colors.dart';
-import 'package:weather_app/theming/colors.dart';
 
 class TextStyles {
   static const title = TextStyle(
@@ -29,6 +28,12 @@ class TextStyles {
     fontWeight: FontWeight.bold,
     color: Colors.white,
   );
+  static const textGray = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.bold,
+    color: ColorsManager.textGray,
+  );
+  static const logOutTextStyle = TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold, fontFamily: "Poppins");
 }
 
 class ButtonStyles {

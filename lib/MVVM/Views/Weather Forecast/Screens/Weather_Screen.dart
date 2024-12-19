@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:weather_app/Responsive/UiComponanets/InfoWidget.dart';
+import '../../../../theming/colors.dart';
 import '../../../../theming/styles.dart';
 import '../../../View_Models/Weathercubit/weather_cubit_cubit.dart';
+import '../../Details/Screen/Details_Screen.dart';
 import '../Widgets/info_item_widget.dart';
 
 class WeatherScreen extends StatelessWidget {
@@ -18,7 +20,7 @@ class WeatherScreen extends StatelessWidget {
             'Weather Forecast',
             style: TextStyles.title,
           ),
-          backgroundColor: Colors.transparent,
+          backgroundColor: ColorsManager.secondaryColor,
           actions: [
             IconButton(
               icon: const Icon(Icons.refresh),
@@ -117,7 +119,7 @@ class WeatherScreen extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            weather.current.condition.text!,
+                            weather.current.condition.text,
                             style: const TextStyle(
                               fontSize: 20,
                               color: Colors.white70,
@@ -159,51 +161,68 @@ class WeatherScreen extends StatelessWidget {
                               itemCount: weather.forecast.forecastday.length,
                               itemBuilder: (context, index) {
                                 final forecastDay = weather.forecast.forecastday[index];
-                                return Card(
-                                  color: Colors.white.withOpacity(0.1),
-                                  margin: const EdgeInsets.symmetric(
-                                    vertical: 4,
-                                    horizontal: 8,
-                                  ),
-                                  child: ListTile(
-                                    leading: forecastDay.day.condition.icon.isNotEmpty
-                                        ? Image.network(
-                                            'https:${forecastDay.day.condition.icon}',
-                                            width: 40,
-                                            height: 40,
-                                            errorBuilder: (_, __, ___) => const Icon(
-                                              Icons.error_outline,
-                                              color: Colors.red,
-                                            ),
-                                          )
-                                        : null,
-                                    title: Text(
-                                      _formatDate(forecastDay.date),
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => DetailsScreen(
+                                          ctiyName: weather.location.name,
+                                          date: _formatDate(forecastDay.date),
+                                          condition: forecastDay.day.condition.text,
+                                          maxTemp: forecastDay.day.maxtempC,
+                                          minTemp: forecastDay.day.mintempC,
+                                          iconUrl: forecastDay.day.condition.icon,
+                                        ),
                                       ),
+                                    );
+                                  },
+                                  child: Card(
+                                    color: Colors.white.withOpacity(0.1),
+                                    margin: const EdgeInsets.symmetric(
+                                      vertical: 4,
+                                      horizontal: 8,
                                     ),
-                                    subtitle: Text(
-                                      'Max: ${forecastDay.day.maxtempC.toStringAsFixed(1)}°C | Min: ${forecastDay.day.mintempC.toStringAsFixed(1)}°C',
-                                      style: const TextStyle(color: Colors.white70),
-                                    ),
-                                    trailing: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.water_drop,
-                                          color: Colors.blue.shade300,
-                                          size: 16,
+                                    child: ListTile(
+                                      leading: forecastDay.day.condition.icon.isNotEmpty
+                                          ? Image.network(
+                                              'https:${forecastDay.day.condition.icon}',
+                                              width: 40,
+                                              height: 40,
+                                              errorBuilder: (_, __, ___) => const Icon(
+                                                Icons.error_outline,
+                                                color: Colors.red,
+                                              ),
+                                            )
+                                          : null,
+                                      title: Text(
+                                        _formatDate(forecastDay.date),
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
                                         ),
-                                        Text(
-                                          '${forecastDay.day.dailyChanceOfRain}%',
-                                          style: const TextStyle(
-                                            color: Colors.white70,
-                                            fontSize: 12,
+                                      ),
+                                      subtitle: Text(
+                                        'Max: ${forecastDay.day.maxtempC.toStringAsFixed(1)}°C | Min: ${forecastDay.day.mintempC.toStringAsFixed(1)}°C',
+                                        style: const TextStyle(color: Colors.white70),
+                                      ),
+                                      trailing: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.water_drop,
+                                            color: Colors.blue.shade300,
+                                            size: 16,
                                           ),
-                                        ),
-                                      ],
+                                          Text(
+                                            '${forecastDay.day.dailyChanceOfRain}%',
+                                            style: const TextStyle(
+                                              color: Colors.white70,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 );
