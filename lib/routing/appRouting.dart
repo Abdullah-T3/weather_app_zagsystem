@@ -1,9 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-<<<<<<< Updated upstream
-import 'package:weather_app_zagsystem/MVVM/Views/home_screen.dart';
-
-=======
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:weather_app/MVVM/View_Models/Weathercubit/weather_cubit_cubit.dart';
 import '../MVVM/View_Models/Authcubit/auth_cubit.dart';
@@ -12,17 +8,11 @@ import '../MVVM/Views/Auth/Screens/sign_up_screen.dart';
 import '../MVVM/Views/Home/Screens/home_Screen.dart';
 import '../MVVM/Views/Settings/Screen/Settings_Screen.dart';
 import '../MVVM/Views/splash_screen.dart';
->>>>>>> Stashed changes
 import 'routs.dart';
 
 class AppRouts {
   Route? generateRoute(RouteSettings settings) {
     switch (settings.name) {
-<<<<<<< Updated upstream
-      case Routes.homePage: 
-        return MaterialPageRoute(builder: (context) => const HomeScreen());
-      
-=======
       case Routes.homePage:
         return MaterialPageRoute(
             builder: (context) => BlocProvider(
@@ -45,7 +35,6 @@ class AppRouts {
                   create: (context) => AuthCubit(FirebaseAuth.instance),
                   child: SignUpScreen(),
                 ));
->>>>>>> Stashed changes
       default:
         return null;
     }

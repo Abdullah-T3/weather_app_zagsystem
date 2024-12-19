@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-<<<<<<< Updated upstream
 import 'colors.dart';
-=======
 import 'package:weather_app/theming/colors.dart';
->>>>>>> Stashed changes
 
 class TextStyles {
   static const title = TextStyle(
