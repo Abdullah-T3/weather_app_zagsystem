@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+<<<<<<< Updated upstream
 <<<<<<< HEAD
 import 'package:weather_app_zagsystem/MVVM/Views/screen/home_screen.dart';
 =======
@@ -8,8 +9,11 @@ import 'package:weather_app_zagsystem/MVVM/Views/sign_up_screen.dart';
 
 import 'package:weather_app_zagsystem/MVVM/Views/splash_screen.dart';
 >>>>>>> eldeeb
+=======
+>>>>>>> Stashed changes
 
 import '../MVVM/Views/Details/Screen/Details_Screen.dart';
+import '../MVVM/Views/screen/home_screen.dart';
 import 'routs.dart';
 
 class AppRouts {

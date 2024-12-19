@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:weather_app_zagsystem/MVVM/Views/screen/api_screen.dart';
+
+import '../screen/api_screen.dart';
 
 class HomeWidget extends StatefulWidget {
   const HomeWidget({super.key});

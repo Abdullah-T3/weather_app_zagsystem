@@ -1,6 +1,8 @@
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:weather_app_zagsystem/theming/colors.dart';
+import 'package:weather_app/Responsive/UiComponanets/InfoWidget.dart';
+
+import '../../../theming/colors.dart';
 
 class BottomnavbarWidget extends StatefulWidget {
   final int currentIndex;
@@ -30,20 +32,23 @@ class _BottomnavbarWidgetState extends State<BottomnavbarWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBottomNavigationBar(
-      icons: icons,
-      activeIndex: _currentIndex,
-      notchSmoothness: NotchSmoothness.softEdge,
-      onTap: (index) {
-        setState(() {
-          _currentIndex = index;
-        });
+    return Infowidget(builder: (context, deviceInfo) {
+      return AnimatedBottomNavigationBar(
+        gapWidth: deviceInfo.screenWidth * 0.05,
+        icons: icons,
+        activeIndex: _currentIndex,
+        notchSmoothness: NotchSmoothness.softEdge,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
 
-        widget.onIndexChanged(index);
-      },
-      backgroundColor: ColorsManager.secondaryColor,
-      activeColor: const Color(0xFF0467D9),
-      inactiveColor: Colors.grey,
-    );
+          widget.onIndexChanged(index);
+        },
+        backgroundColor: ColorsManager.secondaryColor,
+        activeColor: ColorsManager.activeColorbutton,
+        inactiveColor: Colors.grey,
+      );
+    });
   }
 }

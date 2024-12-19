@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:weather_app_zagsystem/theming/colors.dart';
 import 'package:intl/intl.dart';
+import '../../../theming/colors.dart';
 import 'aircondition_screen.dart';
 
 class ApiPage extends StatefulWidget {

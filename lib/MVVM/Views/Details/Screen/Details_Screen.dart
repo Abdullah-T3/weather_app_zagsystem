@@ -1,7 +1,8 @@
+// ignore: file_names
 import 'package:flutter/material.dart';
-import 'package:weather_app_zagsystem/Responsive/UiComponanets/InfoWidget.dart';
-import 'package:weather_app_zagsystem/theming/colors.dart';
 
+import '../../../../Responsive/UiComponanets/InfoWidget.dart';
+import '../../../../theming/colors.dart';
 import '../../../../theming/styles.dart';
 
 class DetailsScreen extends StatelessWidget {

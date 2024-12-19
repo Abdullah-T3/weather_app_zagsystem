@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:weather_app_zagsystem/MVVM/Views/widget/home_widget.dart';
+
+import '../Weather Forecast/Screens/Weather_Screen.dart';
 import '../widget/bottomnavbar_widget.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -18,11 +19,10 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  static const TextStyle _textStyle =
-      TextStyle(fontSize: 20, fontWeight: FontWeight.w400);
+  static const TextStyle _textStyle = TextStyle(fontSize: 20, fontWeight: FontWeight.w400);
 
   final List<Widget> screens = const [
-    HomeWidget(),
+    WeatherScreen(),
     Center(child: Text("Search", style: _textStyle)),
     Center(child: Text("Notifications", style: _textStyle)),
   ];
@@ -30,8 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: screens[_currentIndex],
-      bottomNavigationBar: BottomnavbarWidget(
-          currentIndex: _currentIndex, onIndexChanged: _onIndexChanged),
+      bottomNavigationBar: BottomnavbarWidget(currentIndex: _currentIndex, onIndexChanged: _onIndexChanged),
     );
   }
 }

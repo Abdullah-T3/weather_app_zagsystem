@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:weather_app_zagsystem/MVVM/Views/widget/air_condition_api_widget.dart';
+
+import '../widget/air_condition_api_widget.dart';
 
 class AirCondition extends StatefulWidget {
   const AirCondition({super.key});
