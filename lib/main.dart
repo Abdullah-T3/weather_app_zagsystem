@@ -19,6 +19,7 @@ class MainApp extends StatelessWidget {
       theme: ThemeData(
         scaffoldBackgroundColor: ColorsManager.primaryColor,
         primaryColor: ColorsManager.primaryColor,
+        fontFamily: "Poppins"
       ),
       initialRoute: Routes.detailScreen,
       onGenerateRoute: appRouter.generateRoute,
