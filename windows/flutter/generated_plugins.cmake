@@ -3,7 +3,10 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+<<<<<<< HEAD
   firebase_auth
+=======
+>>>>>>> eldeeb
   firebase_core
 )
 

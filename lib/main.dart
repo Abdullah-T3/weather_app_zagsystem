@@ -21,7 +21,7 @@ class MainApp extends StatelessWidget {
         primaryColor: ColorsManager.primaryColor,
         fontFamily: "Poppins"
       ),
-      initialRoute: Routes.detailScreen,
+      initialRoute: Routes.splashScreen,
       onGenerateRoute: appRouter.generateRoute,
     );
   }
