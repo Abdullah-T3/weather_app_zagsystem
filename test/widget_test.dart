@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:weather_app/main.dart';
+import 'package:weather_app/routing/appRouting.dart';
 
-import 'package:weather_app_zagsystem/main.dart';
-import 'package:weather_app_zagsystem/routing/appRouting.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {

@@ -14,8 +14,8 @@ import '../MVVM/Views/Settings/Screen/Settings_Screen.dart';
 import '../MVVM/Views/splash_screen.dart';
 >>>>>>> Stashed changes
 import 'routs.dart';
-class AppRouts {
 
+class AppRouts {
   Route? generateRoute(RouteSettings settings) {
     switch (settings.name) {
 <<<<<<< Updated upstream
