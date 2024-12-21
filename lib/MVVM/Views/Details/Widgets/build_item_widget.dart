@@ -37,7 +37,7 @@ class BuildItemWidget extends StatelessWidget {
                 '$data',
                 style: style ??
                     TextStyles.title.copyWith(
-                      fontSize: deviceInfo.screenWidth * 0.09,
+                      fontSize: deviceInfo.screenWidth * 0.07,
                     ),
               ),
             ],

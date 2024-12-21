@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:weather_app/Responsive/UiComponanets/InfoWidget.dart';
+import 'package:weather_app/helpers/extantions.dart';
+import '../../../../routing/routs.dart';
 import '../../../../theming/colors.dart';
 import '../../../../theming/styles.dart';
+import '../../../View_Models/SettingsCubit/settings_cubit_cubit.dart';
 import '../../../View_Models/Weathercubit/weather_cubit_cubit.dart';
 import '../../Details/Screen/Details_Screen.dart';
 import '../Widgets/info_item_widget.dart';
@@ -110,41 +113,59 @@ class WeatherScreen extends StatelessWidget {
                               ),
                             ),
                           ],
-                          Text(
-                            '${weather.current.tempC.toStringAsFixed(1)}°C',
-                            style: const TextStyle(
-                              fontSize: 40,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                          Text(
-                            weather.current.condition.text,
-                            style: const TextStyle(
-                              fontSize: 20,
-                              color: Colors.white70,
-                            ),
-                          ),
                           const SizedBox(height: 20),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              InfoItemWidget(
-                                label: 'Humidity',
-                                value: '${weather.current.humidity.toString()}%',
-                                icon: Icons.water_drop_outlined,
-                              ),
-                              InfoItemWidget(
-                                label: 'Wind',
-                                value: '${weather.current.windKph.toStringAsFixed(1)} km/h',
-                                icon: Icons.wind_power_outlined,
-                              ),
-                              InfoItemWidget(
-                                label: 'Visibility',
-                                value: '${weather.current.visKm.toString()} km',
-                                icon: Icons.visibility_outlined,
-                              ),
-                            ],
+                          BlocBuilder<SettingsCubit, SettingsCubitState>(
+                            builder: (context, settingsState) {
+                              final temperatureUnit = settingsState.temperatureUnit;
+                              final windSpeedUnit = settingsState.windSpeedUnit;
+
+                              // Convert temperature based on the selected unit
+                              final temperature = temperatureUnit == "Celsius" ? weather.current.tempC : (weather.current.tempC * 9 / 5) + 32;
+
+                              // Convert wind speed based on the selected unit
+                              final windSpeed = windSpeedUnit == "Km/h" ? weather.current.windKph : weather.current.windKph * 0.621371;
+
+                              return Column(
+                                children: [
+                                  Text(
+                                    '$temperature ${temperatureUnit == "Celsius" ? "°C" : "°F"}',
+                                    style: const TextStyle(
+                                      fontSize: 40,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  Text(
+                                    weather.current.condition.text,
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                      color: Colors.white70,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      InfoItemWidget(
+                                        label: 'Humidity',
+                                        value: '${weather.current.humidity.toString()}%',
+                                        icon: Icons.water_drop_outlined,
+                                      ),
+                                      InfoItemWidget(
+                                        label: 'Wind',
+                                        value: '${windSpeed.toStringAsFixed(1)} ${windSpeedUnit}',
+                                        icon: Icons.wind_power_outlined,
+                                      ),
+                                      InfoItemWidget(
+                                        label: 'Visibility',
+                                        value: '${weather.current.visKm.toString()} km',
+                                        icon: Icons.visibility_outlined,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              );
+                            },
                           ),
                           const SizedBox(height: 20),
                           const Text(
@@ -161,21 +182,29 @@ class WeatherScreen extends StatelessWidget {
                               itemCount: weather.forecast.forecastday.length,
                               itemBuilder: (context, index) {
                                 final forecastDay = weather.forecast.forecastday[index];
+
+                                // Get the selected temperature unit from SettingsCubit
+                                final temperatureUnit = context.read<SettingsCubit>().state.temperatureUnit;
+
+                                // Convert the max and min temperature based on the selected unit (Celsius or Fahrenheit)
+                                final maxTemp = temperatureUnit == 'Celsius' ? forecastDay.day.maxtempC : (forecastDay.day.maxtempC * 9 / 5) + 32;
+                                final minTemp = temperatureUnit == 'Celsius' ? forecastDay.day.mintempC : (forecastDay.day.mintempC * 9 / 5) + 32;
+
+                                // Format the temperature as needed (with 1 decimal place)
+                                final maxTempStr = maxTemp.toStringAsFixed(1);
+                                final minTempStr = minTemp.toStringAsFixed(1);
+
                                 return GestureDetector(
                                   onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => DetailsScreen(
-                                          ctiyName: weather.location.name,
-                                          date: _formatDate(forecastDay.date),
-                                          condition: forecastDay.day.condition.text,
-                                          maxTemp: forecastDay.day.maxtempC,
-                                          minTemp: forecastDay.day.mintempC,
-                                          iconUrl: forecastDay.day.condition.icon,
-                                        ),
-                                      ),
-                                    );
+                                    context.pushNamed(Routes.detailScreen, arguments: {
+                                      'date': _formatDate(forecastDay.date),
+                                      'condition': forecastDay.day.condition.text,
+                                      'maxTemp': maxTemp, // Converted max temp
+                                      'minTemp': minTemp, // Converted min temp
+                                      'iconUrl': forecastDay.day.condition.icon,
+                                      'cityName': weather.location.name,
+                                      'temperatureUnit': temperatureUnit,
+                                    });
                                   },
                                   child: Card(
                                     color: Colors.white.withOpacity(0.1),
@@ -203,7 +232,7 @@ class WeatherScreen extends StatelessWidget {
                                         ),
                                       ),
                                       subtitle: Text(
-                                        'Max: ${forecastDay.day.maxtempC.toStringAsFixed(1)}°C | Min: ${forecastDay.day.mintempC.toStringAsFixed(1)}°C',
+                                        'Max: $maxTempStr°${temperatureUnit == "Celsius" ? "C" : "F"} | Min: $minTempStr°${temperatureUnit == "Celsius" ? "C" : "F"}',
                                         style: const TextStyle(color: Colors.white70),
                                       ),
                                       trailing: Column(
@@ -228,7 +257,7 @@ class WeatherScreen extends StatelessWidget {
                                 );
                               },
                             ),
-                          ),
+                          )
                         ],
                       ),
                     ),
@@ -236,6 +265,7 @@ class WeatherScreen extends StatelessWidget {
                 );
               });
             }
+
             return const SizedBox();
           },
         ),

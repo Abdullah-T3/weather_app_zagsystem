@@ -7,17 +7,25 @@ import '../../../../Responsive/UiComponanets/InfoWidget.dart';
 import '../../../../theming/colors.dart';
 import '../../../../theming/styles.dart';
 import '../../../View_Models/Authcubit/auth_cubit.dart';
+import '../../../View_Models/SettingsCubit/settings_cubit_cubit.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
   @override
-  _SettingsScreenState createState() => _SettingsScreenState();
+  State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  String selectedTemperatureUnit = "Celsius"; // Default selected unit
-  String selectedWindSpeedUnit = "Km/h"; // Default wind speed unit
+  String? selectedValue; // Declare selectedValue
+
+  @override
+  void initState() {
+    super.initState();
+    // Initially set the selectedValue to the current wind speed unit from settings
+    final currentWindSpeedUnit = context.read<SettingsCubit>().state.windSpeedUnit;
+    selectedValue = currentWindSpeedUnit; // Set initial value from the state
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,14 +39,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       body: BlocListener<AuthCubit, AuthState>(
         listener: (context, state) {
-          // If the user is not authenticated, navigate to the login screen
           if (state is Unauthenticated) {
             context.pushReplacementNamed(Routes.loginScreen);
           }
           if (state is AuthError) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
           } else if (state is AuthLoading) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Loading...")));
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Loading...")));
           }
         },
         child: Infowidget(
@@ -49,53 +56,51 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 start: deviceInfo.screenWidth * 0.05,
                 end: deviceInfo.screenWidth * 0.05,
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Units",
-                    style: TextStyles.title,
-                  ),
-                  SizedBox(height: deviceInfo.screenHeight * 0.02),
-                  Container(
-                    width: deviceInfo.screenWidth * 0.9,
-                    padding: EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: ColorsManager.secondaryColor,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Temperature",
-                          style: TextStyles.textGray,
+              child: BlocBuilder<SettingsCubit, SettingsCubitState>(
+                builder: (context, state) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Units",
+                        style: TextStyles.title,
+                      ),
+                      SizedBox(height: deviceInfo.screenHeight * 0.02),
+                      Container(
+                        width: deviceInfo.screenWidth * 0.9,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: ColorsManager.secondaryColor,
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                        SizedBox(height: 8),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: ColorsManager.primaryColor,
-                            border: Border.all(color: ColorsManager.secondaryColor),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.all(deviceInfo.localWidth * 0.001),
-                            child: ToggleButtons(
-                              color: ColorsManager.choosedColor,
-                              borderColor: ColorsManager.secondaryColor,
-                              constraints: BoxConstraints(minWidth: deviceInfo.localWidth * 0.4, minHeight: deviceInfo.localHeight * 0.05),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Temperature",
+                              style: TextStyles.textGray,
+                            ),
+                            const SizedBox(height: 8),
+                            ToggleButtons(
+                              color: ColorsManager.textWhite,
+                              borderColor: ColorsManager.choosedColor,
+                              selectedBorderColor: ColorsManager.textWhite,
+                              constraints: BoxConstraints(
+                                minWidth: deviceInfo.localWidth * 0.4,
+                                minHeight: deviceInfo.localHeight * 0.05,
+                              ),
                               isSelected: [
-                                selectedTemperatureUnit == "Celsius",
-                                selectedTemperatureUnit == "Fahrenheit",
+                                state.temperatureUnit == "Celsius",
+                                state.temperatureUnit == "Fahrenheit",
                               ],
                               onPressed: (index) {
-                                setState(() {
-                                  selectedTemperatureUnit = index == 0 ? "Celsius" : "Fahrenheit";
-                                });
+                                context.read<SettingsCubit>().updateTemperatureUnit(
+                                      index == 0 ? "Celsius" : "Fahrenheit",
+                                    );
                               },
                               borderRadius: BorderRadius.circular(10),
                               selectedColor: Colors.white,
-                              fillColor: ColorsManager.secondaryColor,
+                              fillColor: ColorsManager.primaryColor,
                               children: const [
                                 Padding(
                                   padding: EdgeInsets.symmetric(horizontal: 16),
@@ -107,65 +112,63 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 ),
                               ],
                             ),
-                          ),
+                            SizedBox(height: deviceInfo.screenHeight * 0.03),
+                            Text(
+                              "Wind Speed",
+                              style: TextStyles.textGray,
+                            ),
+                            const SizedBox(height: 8),
+                            DropdownButton<String>(
+                              dropdownColor: ColorsManager.textWhite,
+                              value: selectedValue, 
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  selectedValue = newValue; 
+                                });
+                                context.read<SettingsCubit>().updateWindSpeedUnit(newValue!);
+                              },
+                              items: [
+                                'Km/h',
+                                'm/s',
+                                'mph'
+                              ].map<DropdownMenuItem<String>>((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value, style: TextStyles.textGray),
+                                );
+                              }).toList(),
+                            ),
+                          ],
                         ),
-                        SizedBox(height: deviceInfo.screenHeight * 0.03),
-                        Text(
-                          "Wind Speed",
-                          style: TextStyles.textGray,
-                        ),
-                        SizedBox(height: 8),
-                        DropdownButton<String>(
-                          value: selectedWindSpeedUnit,
-                          items: [
-                            "Km/h",
-                            "Miles/h"
-                          ]
-                              .map(
-                                (unit) => DropdownMenuItem(
-                                  value: unit,
-                                  child: Text(
-                                    unit,
-                                    style: TextStyles.textGray,
-                                  ),
-                                ),
-                              )
-                              .toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              selectedWindSpeedUnit = value!;
-                            });
-                          },
-                          dropdownColor: ColorsManager.secondaryColor,
+                      ),
+                      SizedBox(height: deviceInfo.screenHeight * 0.03),
+                      Text(
+                        "About",
+                        style: TextStyles.title,
+                      ),
+                      SizedBox(height: deviceInfo.screenHeight * 0.03),
+                      Text(
+                        "This app is a simple weather forecast app that uses the OpenWeatherMap API to get weather information. It is built using Flutter and the MVVM architecture.",
+                        style: TextStyles.textGray,
+                      ),
+                      SizedBox(height: deviceInfo.screenHeight * 0.03),
+                      MaterialButton(
+                        onPressed: () {
+                          context.read<AuthCubit>().signOut();
+                        },
+                        color: Colors.red,
+                        padding: const EdgeInsets.all(16),
+                        shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: deviceInfo.screenHeight * 0.03),
-                  Text(
-                    "About",
-                    style: TextStyles.title,
-                  ),
-                  SizedBox(height: deviceInfo.screenHeight * 0.03),
-                  Text(
-                    "This app is a simple weather forecast app that uses the OpenWeatherMap API to get weather information. It is built using Flutter and the MVVM architecture.",
-                    style: TextStyles.textGray,
-                  ),
-                  SizedBox(height: deviceInfo.screenHeight * 0.03),
-                  MaterialButton(
-                    onPressed: () {
-                      context.read<AuthCubit>().signOut();
-                    },
-                    color: Colors.red,
-                    padding: EdgeInsets.all(16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                    child: Text(
-                      "Logout",
-                      style: TextStyles.logOutTextStyle,
-                    ),
-                  ),
-                ],
+                        child: Text(
+                          "Logout",
+                          style: TextStyles.logOutTextStyle,
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
             );
           },

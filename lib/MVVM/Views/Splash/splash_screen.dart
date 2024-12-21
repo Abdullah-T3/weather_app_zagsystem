@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:weather_app/helpers/extantions.dart';
 
-import '../../routing/routs.dart';
-import '../../theming/styles.dart';
+import '../../../routing/routs.dart';
+import '../../../theming/styles.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

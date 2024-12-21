@@ -11,6 +11,8 @@ class DetailsScreen extends StatelessWidget {
   final double minTemp;
   final String iconUrl;
   final String ctiyName;
+  final String temperatureUnit;
+
   const DetailsScreen({
     super.key,
     required this.date,
@@ -19,12 +21,19 @@ class DetailsScreen extends StatelessWidget {
     required this.minTemp,
     required this.iconUrl,
     required this.ctiyName,
+    required this.temperatureUnit,
   });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         backgroundColor: ColorsManager.secondaryColor,
         title: Text(
           ctiyName,
@@ -53,38 +62,40 @@ class DetailsScreen extends StatelessWidget {
                     date,
                     style: TextStyles.title,
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
+                  // Icon URL: If it's empty, display a placeholder or default icon
                   if (iconUrl.isNotEmpty)
                     Image.network(
                       'https:$iconUrl',
                       width: deviceInfo.screenWidth * 0.4,
                       height: deviceInfo.screenWidth * 0.4,
-                      errorBuilder: (_, __, ___) => const Icon(
-                        Icons.error_outline,
-                        color: Colors.red,
-                        size: 50,
-                      ),
                     ),
+
                   const SizedBox(height: 10),
+                  // Max/Min Temperature Row
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      BuildItemWidget(data: maxTemp.toString(), title: 'Max Temp'),
+                      BuildItemWidget(
+                        data: maxTemp.toStringAsFixed(1) + ' ${temperatureUnit == 'Celsius' ? '°C' : '°F'}',
+                        title: 'Max Temp',
+                      ),
                       const SizedBox(width: 10),
-                      BuildItemWidget(data: minTemp.toString(), title: 'Min Temp'),
+                      BuildItemWidget(
+                        data: minTemp.toStringAsFixed(1) + ' ${temperatureUnit == 'Celsius' ? '°C' : '°F'}',
+                        title: 'Min Temp',
+                      ),
                     ],
                   ),
                   const SizedBox(height: 10),
+                  // Condition Row
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       BuildItemWidget(
                         data: condition,
-                        style: TextStyles.title,
                         title: 'Condition',
                       ),
-                      const SizedBox(width: 10),
-                      BuildItemWidget(data: minTemp.toString(), title: 'Min Temp'),
                     ],
                   ),
                 ],
